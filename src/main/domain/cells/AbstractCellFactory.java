@@ -9,16 +9,9 @@ package domain.cells;
 
 public abstract class AbstractCellFactory {
 	
-	protected BlankCell blankCellPrototype;
-	protected MineCell mineCellPrototype;
+	abstract public Cell makeBlankCell();
 	
-	public Cell makeBlankCell(){
-		return blankCellPrototype;
-	}
-	
-	public Cell makeMineCell(){
-		return mineCellPrototype;
-	}
+	abstract public Cell makeMineCell();
 	
 	public abstract Cell makeNumberCell(Integer adjacentMineCount);
 }

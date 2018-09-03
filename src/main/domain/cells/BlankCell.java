@@ -31,4 +31,8 @@ public class BlankCell extends Cell {
 		return blankSymbol;
 	}
 
+	@Override
+	public BlankCell clone(){
+		return new BlankCell(blankSymbol);
+	}
 }

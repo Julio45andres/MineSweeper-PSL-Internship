@@ -2,6 +2,7 @@ package domain.board;
 
 import java.util.Random;
 
+import arrays.ArrayQuery;
 import coordinates.CardinalPointsSetMaker;
 import domain.cells.AbstractCellFactory;
 import domain.cells.Cell;
@@ -103,6 +104,7 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 		final int adjacentMineCountIndex = 2;
 		// 8 tuples (dx, dy).
 		final int[][] deltas = new CardinalPointsSetMaker().getCardinalPoints();
+		ArrayQuery legalPositionQuery = new ArrayQuery();
 		
 		/* Steps:
 		 * 1. For each mine take its x and y coordinates.
@@ -129,12 +131,12 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 				dy = deltas[j][columnIndex];
 				row = mineRow + dx;
 				column = mineColumn + dy;
-				if(!inRange(mineRow + dx, mineColumn + dy)) continue;
+				if(!legalPositionQuery.inRange(mineRow + dx, mineColumn + dy, boardHeight, boardWidth)) continue;
 				// Is there a mine cell on position (mineRow + dx, mineColumn + dy)?
 				if(!isItemAtCell(row, column, mineIndex)){
 					// No
 					// Is there a numbered cell on position (mineRow + dx, mineColumn + dy)?
-					if(!inRange(mineRow + dx, mineColumn + dy)) continue;
+					if(!legalPositionQuery.inRange(mineRow + dx, mineColumn + dy, boardHeight, boardWidth)) continue;
 					if(!isItemAtCell(mineRow + dx, mineColumn + dy, numberedCellsIndex)){
 						// No
 						// Then put (mineRow + dx, mineColumn + dy) position on the cell on the numbered cell index with an adjacent mine count of 1.
@@ -219,15 +221,5 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 				if(index[i][x] == row && index[i][y] == column) return i;
 		}
 		throw new NullPointerException("cell not found");
-	}
-	
-	public boolean inRange(int row, int column, Integer[][] index){
-		if(row < 0 || column < 0) return false;
-		return row < index.length && column < index[0].length;		
-	}
-	
-	public boolean inRange(int row, int column){
-		if(row < 0 || column < 0) return false;
-		return row < boardHeight && column < boardWidth;		
 	}
 }

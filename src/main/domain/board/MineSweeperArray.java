@@ -58,7 +58,9 @@ public class MineSweeperArray implements MineSweeperBoard {
 		String boardString = "";
 		for(int i = 0; i < board.length; i++){
 			for(int j = 0; j < board[0].length; j++){
-				if(!board[i][j].isUncovered())
+				if(!board[i][j].isUncovered() && board[i][j].hasFlag())
+					boardString = boardString.concat("P" + " ");
+				else if(!board[i][j].isUncovered())
 					boardString = boardString.concat("." + " ");
 				else
 					boardString = boardString.concat(board[i][j].getContent() + " ");

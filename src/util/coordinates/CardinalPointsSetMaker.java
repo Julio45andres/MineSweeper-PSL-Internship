@@ -44,8 +44,8 @@ public class CardinalPointsSetMaker {
 	 * @return The following array: [N, W, E, S].
 	 */
 	public int[][] getMainCardinalPoints(){
-		final int dx = 1, dy = 1;
-		final int ndx = -1, ndy = -1;
+		final int dx = 1, dy = -1;
+		final int ndx = -1, ndy = 1;
 		final int d0 = 0;
 
 		final int[][] cardinalPoints = {

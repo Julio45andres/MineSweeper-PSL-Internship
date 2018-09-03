@@ -4,10 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import domain.board.MineSweeperArrayFactory;
-import domain.board.MineSweeperBoardFactory;
 import domain.cells.AbstractCellFactory;
 
 /**

@@ -21,4 +21,9 @@ public class MineCell extends Cell {
 	public String getContent() {
 		return mineSymbol;
 	}
+	
+	@Override
+	public MineCell clone(){
+		return new MineCell(mineSymbol);
+	}
 }

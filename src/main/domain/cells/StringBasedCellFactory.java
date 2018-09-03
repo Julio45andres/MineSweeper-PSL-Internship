@@ -8,10 +8,12 @@ package domain.cells;
  */
 
 public class StringBasedCellFactory extends AbstractCellFactory {
+	String blankCellContentSymbol;
+	String mineCellContentSymbol;
 	
 	public StringBasedCellFactory(String blankCellContentSymbol, String mineCellContentSymbol) {
-		super.blankCellPrototype = new BlankCell(blankCellContentSymbol);
-		super.mineCellPrototype = new MineCell(mineCellContentSymbol);
+		this.blankCellContentSymbol = blankCellContentSymbol;
+		this.mineCellContentSymbol = mineCellContentSymbol;
 	}
 
 	/**
@@ -21,5 +23,15 @@ public class StringBasedCellFactory extends AbstractCellFactory {
 	@Override
 	public Cell makeNumberCell(Integer adjacentMineCount) {
 		return new NumberCell(adjacentMineCount);
+	}
+
+	@Override
+	public Cell makeBlankCell() {
+		return new BlankCell(blankCellContentSymbol);
+	}
+
+	@Override
+	public Cell makeMineCell() {
+		return new MineCell(mineCellContentSymbol);
 	}
 }
