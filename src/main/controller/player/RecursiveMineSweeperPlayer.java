@@ -88,7 +88,7 @@ public class RecursiveMineSweeperPlayer implements MineSweeperPlayer {
 	@Override
 	public GameState check() {
 		for(int i = 0; i < board.height(); i++){
-			for(int j = 0; j < board.height(); j++){
+			for(int j = 0; j < board.width(); j++){
 				if(!board.isMine(i,j) && board.hasFlag(i,j))
 					return GameState.ONGOING;
 			}
