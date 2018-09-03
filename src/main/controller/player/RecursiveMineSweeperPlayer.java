@@ -1,6 +1,6 @@
 package controller.player;
 
-import deltas.CardinalPointsSetMaker;
+import coordinates.CardinalPointsSetMaker;
 import domain.board.MineSweeperBoard;
 import domain.cells.CellType;
 
@@ -24,7 +24,7 @@ public class RecursiveMineSweeperPlayer implements MineSweeperPlayer {
 
 	public RecursiveMineSweeperPlayer(MineSweeperBoard board) {
 		this.board = board;
-		deltas = new CardinalPointsSetMaker().getCardinalPoints();
+		deltas = new CardinalPointsSetMaker().getMainCardinalPoints();
 	}
 
 	/**

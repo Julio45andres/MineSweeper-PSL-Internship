@@ -2,7 +2,7 @@ package domain.board;
 
 import java.util.Random;
 
-import deltas.CardinalPointsSetMaker;
+import coordinates.CardinalPointsSetMaker;
 import domain.cells.AbstractCellFactory;
 import domain.cells.Cell;
 
@@ -13,6 +13,7 @@ import domain.cells.Cell;
 public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 
 	private AbstractCellFactory cellFactory;
+	private int boardHeight, boardWidth;
 	
 	/*
 	 * TODO: Create an sparse matrix class to make a more clean implementation of the MineSweeperBoardFactory
@@ -23,6 +24,8 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 
 	@Override
 	public MineSweeperBoard makeBoard(int height, int width, int numberOfMines) {
+		boardHeight = height;
+		boardWidth = width;
 		Cell[][] boardArray = new Cell[height][width];
 		Integer[][] mineIndex = new Integer[numberOfMines][2];
 		// One mine have at most 8 adjacent numbered cells.
@@ -86,6 +89,8 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 	 */
 	public void createNumberedCellsIndex(Integer[][] numberedCellsIndex, Integer[][] mineIndex, int numberOfMines){
 		// Variables
+		int row;
+		int column;
 		int mineRow;
 		int mineColumn;
 		int dx;
@@ -122,45 +127,60 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 			for(int j = 0; j < 8; j++){
 				dx = deltas[j][rowIndex];
 				dy = deltas[j][columnIndex];
-				// Is there a numbered cell on position (mineRow + dx, mineColumn + dy)?
-				if(!isItemAtCell(mineRow + dx, mineColumn + dy, mineIndex)){
+				row = mineRow + dx;
+				column = mineColumn + dy;
+				if(!inRange(mineRow + dx, mineColumn + dy)) continue;
+				// Is there a mine cell on position (mineRow + dx, mineColumn + dy)?
+				if(!isItemAtCell(row, column, mineIndex)){
 					// No
 					// Is there a numbered cell on position (mineRow + dx, mineColumn + dy)?
+					if(!inRange(mineRow + dx, mineColumn + dy)) continue;
 					if(!isItemAtCell(mineRow + dx, mineColumn + dy, numberedCellsIndex)){
 						// No
 						// Then put (mineRow + dx, mineColumn + dy) position on the cell on the numbered cell index with an adjacent mine count of 1.
 						numberedCellsIndex[cellID][rowIndex] = mineRow + dx;
 						numberedCellsIndex[cellID][columnIndex] = mineColumn + dy;
 						numberedCellsIndex[cellID][adjacentMineCountIndex] = 1;
+						cellID++;
 
 					} else {
 						// Yes
 						// Then sum 1 to the adjacent mine count of (mineRow + dx, mineColumn + dy) position.
-						numberedCellsIndex[cellID][adjacentMineCountIndex]++;
+//						Integer[] position = {mineRow + dx, mineColumn + dy};
+//						Integer mineCount = numberedCells.get(position);
+//						numberedCells.set(position, mineCount++);
+						int idCell;
+						try {
+							idCell = getIndexOfCell(mineRow + dx, mineColumn + dy, numberedCellsIndex);
+							numberedCellsIndex[idCell][adjacentMineCountIndex]++;
+						} catch (NullPointerException  e) {
+							System.err.println(e.getMessage());
+							e.printStackTrace();
+						}
 					}
 				} // If there's no mine on (mineRow + dx, mineColumn + dy) then skip that position.
-				cellID++;
+				
 			}
-			cellID++;
 		}
 	}
 	
-	public void createNumberedCells(Cell[][] boardArray, Integer[][] mineIndex){
-		Cell nextMine;
-		int row;
+	public void createNumberedCells(Cell[][] boardArray, Integer[][] numberedCellIndex){
+		Cell nextNumberedCell;
+		Integer row;
 		int column;
 		int mineCount;
 		int rowIndex = 0;
 		int columnIndex = 1;
 		int mineCountIndex = 2;
-		int length = mineIndex.length;
+		int length = numberedCellIndex.length;
 		
 		for(int i = 0; i < length; i++){
-			row = mineIndex[i][rowIndex];
-			column = mineIndex[i][columnIndex];
-			mineCount = mineIndex[i][mineCountIndex];
-			nextMine = cellFactory.makeNumberCell(mineCount);
-			boardArray[row][column] = nextMine;
+			row = numberedCellIndex[i][rowIndex];
+			if(row == null) break;
+			column = numberedCellIndex[i][columnIndex];
+			mineCount = numberedCellIndex[i][mineCountIndex];
+			nextNumberedCell = cellFactory.makeNumberCell(mineCount);
+			boardArray[row][column] = nextNumberedCell;
 		}
 	}
 	
@@ -188,5 +208,26 @@ public class MineSweeperArrayFactory implements MineSweeperBoardFactory {
 				if(index[i][x] == row && index[i][y] == column) return true;
 		}
 		return false;
+	}
+	
+	public Integer getIndexOfCell(int row, int column, Integer[][] index) throws NullPointerException{
+		final int x = 0;
+		final int y = 1;
+		int length = index.length;
+		for(int i = 0; i < length; i++){
+			if(!(index[i][x] == null) && !(index[i][y] == null))
+				if(index[i][x] == row && index[i][y] == column) return i;
+		}
+		throw new NullPointerException("cell not found");
+	}
+	
+	public boolean inRange(int row, int column, Integer[][] index){
+		if(row < 0 || column < 0) return false;
+		return row < index.length && column < index[0].length;		
+	}
+	
+	public boolean inRange(int row, int column){
+		if(row < 0 || column < 0) return false;
+		return row < boardHeight && column < boardWidth;		
 	}
 }
